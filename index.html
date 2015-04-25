@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>Firebase BotDrive Simulate</title>
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="buttons.css" />
+    <link rel="stylesheet" href="default.css" />
+    <link rel="stylesheet" href="app.css" />
+    <link rel="stylesheet" href="navsim.css" />
+    <style>
+    </style>
+	<script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/zepto-1.1.6.js"></script>
+    <!-- <script type="text/javascript" charset="utf-8" src="botNavigate.js"></script> -->
+    <script type="text/javascript" charset="utf-8" src="fbBotNavigate.js"></script>
+    <script type="text/javascript" charset="utf-8" src="botSimulate.js"></script>
+
+    <script type="text/javascript">
+	var trigger = {
+    	left : 3.0,
+	    right: -3.0,
+    	ystop: 8.0,
+	    yminforward: 0,
+    	ymaxforward: 5,
+	    zminforward: 8,
+    	yfatal: 0,
+	    zfatal: 0
+	};
+
+	var botNavigate = {
+    	left    : 0,
+	    right   : 0,
+    	forward : 0,
+	    backward : 0,
+    	stop    : 0,
+	    dead    : 0
+	};
+
+	var deadman = 0;
+
+	//////////////////////////////////
+	//
+	function onLoad() {
+		//alert("body loaded.");
+	}
+	//
+    </script>
+</head>
+<body onload="onLoad()">
+<div id=app-bar>
+	<img id=app-icon  align=left  src=favicon-48x48.png>
+	<span style="color:#ffffff;">Firebase BotDrive Simulate</span>
+	<img id=menu-bars align=right src=images/3menubars_grey.png>
+</div>
+<button id=pushData class="button button-pill button-primary button-large" style="margin:0.1em;float:right;">
+	Push Data
+</button>
+<button id=toggleAccel class="button button-pill button-primary button-large" style="margin:0.1em">
+	Toggle Accel
+</button>
+<div style="margin:0;padding:0;"></div>
+
+<div id=accelerometerWrapper>
+
+	<div id=visualArrows class=arrowsWrapper>
+		<div id=table0 class=table>
+			<div id=row1 class=tr><div class=td></div><div class=td></div><div class=td><img id=d1 class=arw src=i/iU.png></div><div class=td></div><div class=td></div></div>
+			<div id=row2 class=tr><div class=td></div><div class=td></div><div class=td><img id=d2 class=arw src=i/iU.png></div><div class=td></div><div class=td></div></div>
+			<div id=row3 class=tr><div class=td><img id=d3 class=arw src=i/iL.png></div><div class=td><img id=d4 class=arw src=i/iL.png></div><div class=td><img id=d5 class=arw src=i/i0.png></div><div class=td><img id=d6 class=arw src=i/iR.png></div><div class=td><img id=d7 class=arw src=i/iR.png></div></div>
+			<div id=row4 class=tr><div class=td></div><div class=td></div><div class=td><img id=d8 class=arw src=i/iD.png></div><div class=td></div><div class=td></div></div>
+			<div id=row5 class=tr><div class=td></div><div class=td></div><div class=td><img id=d9 class=arw src=i/iD.png></div><div class=td></div><div class=td></div></div>
+		</div>
+	</div>
+
+	<div id=gforceInformation> <!-- aka accelerometer -->
+		<div id=ax class="button button-block button-action button-large buttonOverride" >X <span id=accelX></span></div>
+		<div id=ay class="button button-block button-action button-large" >Y <span id=accelY></span></div>
+		<div id=az class="button button-block button-action button-large" >Z <span id=accelZ></span></div>
+		<div id=ts class="button button-block button-primary button-large" ><span id=timestamp></span></div>
+	</div>
+</div>
+
+<pre id=dbug_console>
+</pre>
+
+<div class="copyright" style="padding:5px;align:left;font-style:italic;font-size:small;">
+    <span id=copyright>Created by Jesus Monroy, Jr. &copy; 2015</span>
+</div>
+    <script type="text/javascript">
+	//
+	$('#pushData').click(function(){
+		pushTheData();
+	});
+	function pushTheData() {
+		myFirebaseRef.push({"d":"f","s":"25"})
+	}
+
+	/* This is the node.js alternative, which I have not used yet. 2015-04-25 */
+	/* var Firebase = require("firebase"); */
+	var myFirebaseRef = new Firebase("https://botdrive.firebaseio.com/drive");
+
+	myFirebaseRef.on("child_added", function(snapshot) {
+		//alert("on(value):" + JSON.stringify(snapshot.val()));
+		packet = snapshot.val();
+		console.log("d:" + packet.d);
+		console.log("s:" + packet.s);
+		fbBotNavigate.driveBot(packet);
+		simulateDriveBot();
+	});
+
+    </script>
+</html>
+
+
+
+
+
+
